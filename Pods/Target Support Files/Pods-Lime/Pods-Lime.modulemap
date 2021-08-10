@@ -1,0 +1,6 @@
+framework module Pods_Lime {
+  umbrella header "Pods-Lime-umbrella.h"
+
+  export *
+  module * { export * }
+}

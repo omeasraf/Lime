@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "FontAwesomeSwiftUI",
+        "repositoryURL": "https://github.com/onmyway133/FontAwesomeSwiftUI",
+        "state": {
+          "branch": null,
+          "revision": "112baccbd390338dda124f26cd395e8cbd13ecda",
+          "version": "1.0.4"
+        }
+      },
+      {
+        "package": "Kingfisher",
+        "repositoryURL": "https://github.com/onevcat/Kingfisher.git",
+        "state": {
+          "branch": "master",
+          "revision": "c7deab70ca2caa98b9ca54cbb865812eac617751",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
