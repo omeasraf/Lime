@@ -6,8 +6,9 @@
 //
 
 import SwiftUI
-import Kingfisher
 import FontAwesomeSwiftUI
+import Firebase
+import SPAlert
 
 struct LoginView: View {
     @State private var email: String = ""
@@ -82,7 +83,26 @@ struct LoginView: View {
                 VStack{
                     Spacer().frame(height: 30)
                     Button {
-                        
+                        Firestore.firestore().collection("users").whereField("email", isEqualTo: self.email).getDocuments() { (querySnapshot, err) in
+                            if let err = err {
+                                print("Unable to retrieve user data: \(err)")
+                            }
+                            else{
+                                if querySnapshot!.documents.count <= 0 {
+                                    let alert = SPAlertView(title: "Email not found", message: "Make sure you've entered the correct email.", preset: SPAlertIconPreset.error)
+                                    alert.present(duration: 3, haptic: SPAlertHaptic.error) {
+                                        print("Done")
+                                    }
+                                }
+                                for document in querySnapshot!.documents {
+                                    print("\(document.documentID) => \(document.data())")
+                                    let alert = SPAlertView(title: "Success", message: "Successfully signed in.", preset: SPAlertIconPreset.done)
+                                    alert.present(duration: 3, haptic: SPAlertHaptic.success) {
+                                        print("Done")
+                                    }
+                                }
+                            }
+                        }
                     } label: {
                         ZStack {
                             LinearGradient(gradient: Gradient(colors: [Color(red: 4 / 255, green: 220 / 255, blue: 4 / 255), Color(red: 0 / 255, green: 221 / 255, blue: 132 / 255)]), startPoint: .leading, endPoint: .trailing)
@@ -98,12 +118,16 @@ struct LoginView: View {
                     Spacer().frame(height: 10)
                     HStack{
                         Text("Don't have an acccount?")
-                        NavigationLink(destination: SignUpView()){
+                        Button {
+                            self.signup_visible.toggle()
+                        } label: {
                             Text("Sign up")
                                 .foregroundColor(Color(UIColor.label))
                                 .font(.system(size: 15, weight: .bold, design: .default))
-                        }
-
+                        }.sheet(isPresented: $signup_visible, content: {
+                            SignUpView()
+                                .background(Color(UIColor.systemBackground))
+                        })
                     }
                     Spacer().frame(height: 50)
                 }

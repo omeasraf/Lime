@@ -8,6 +8,7 @@
 import SwiftUI
 import FontAwesomeSwiftUI
 import Firebase
+import SPAlert
 
 struct SignUpView: View {
     @State private var name: String = ""
@@ -127,7 +128,10 @@ struct SignUpView: View {
                                         print("Error = \(error)")
                                     }
                                     else{
-                                        print("No Error")
+                                        let alert = SPAlertView(title: "Success", message: "Successfully created account.", preset: SPAlertIconPreset.done)
+                                        alert.present(duration: 3, haptic: SPAlertHaptic.success) {
+                                            print("Done")
+                                        }
                                     }
                                     
                                 }
@@ -147,21 +151,27 @@ struct SignUpView: View {
                             Spacer().frame(height: 10)
                             HStack{
                                 Text("Already have an acccount?")
-                                NavigationLink(destination: LoginView()){
+                                Button {
+                                    self.login_visible.toggle()
+                                } label: {
                                     Text("Login")
                                         .foregroundColor(Color(UIColor.label))
                                         .font(.system(size: 15, weight: .bold, design: .default))
-                                }
+                                }.sheet(isPresented: $login_visible, content: {
+                                    LoginView()
+                                        .background(Color(UIColor.systemBackground))
+                                })
 
                             }
                             Spacer().frame(height: 50)
                         }
                 }.padding(20)
+                
             }
         }
+        .background(Color(UIColor.systemBackground))
         .navigationBarTitle("Sign Up")
         .navigationBarTitleDisplayMode(.inline)
-//        .navigationBarHidden(true)
         
     }
 }
