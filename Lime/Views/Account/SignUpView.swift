@@ -7,12 +7,15 @@
 
 import SwiftUI
 import FontAwesomeSwiftUI
+import Firebase
 
 struct SignUpView: View {
     @State private var name: String = ""
     @State private var email: String = ""
+    @State private var username: String = ""
     @State private var password: String = ""
     @State private var login_visible = false
+    @State private var docRef: DocumentReference!
     var body: some View {
             
         VStack(spacing: 0) {
@@ -67,6 +70,19 @@ struct SignUpView: View {
                                                 .stroke(Color(red: 48 / 255, green: 49 / 255, blue: 54 / 255), lineWidth: 4))
                                 }
                                 Spacer().frame(height: 10)
+                                VStack{
+                                    HStack{
+                                        Text("Username")
+                                        Spacer()
+                                    }
+                                    TextField("johnsmith", text: $username)
+                                        .padding()
+                                        .cornerRadius(10)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .stroke(Color(red: 48 / 255, green: 49 / 255, blue: 54 / 255), lineWidth: 4))
+                                }
+                                Spacer().frame(height: 10)
                                 HStack{
                                     Text("Email")
                                     Spacer()
@@ -97,6 +113,24 @@ struct SignUpView: View {
                         VStack{
                             Spacer().frame(height: 30)
                             Button {
+                                print("Setting ref")
+                                let data: [String: Any] = [
+                                    "name": self.name,
+                                    "username": self.username,
+                                    "email": self.email,
+                                    "password": self.password
+                                ]
+                                self.docRef = Firestore.firestore().document("users/\(UUID().uuidString)")
+                                print("Setting data")
+                                self.docRef.setData(data) { error in
+                                    if let error = error {
+                                        print("Error = \(error)")
+                                    }
+                                    else{
+                                        print("No Error")
+                                    }
+                                    
+                                }
                                 
                             } label: {
                                 ZStack {

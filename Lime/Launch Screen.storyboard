@@ -48,7 +48,7 @@
     <resources>
         <image name="Icon" width="166.5" height="166.5"/>
         <namedColor name="AccentColor">
-            <color red="0.21639095095835081" green="1" blue="0.26075980324040748" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+            <color red="0.45811867709999998" green="0.98607844109999998" blue="0.29782152179999999" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
         </namedColor>
     </resources>
 </document>
