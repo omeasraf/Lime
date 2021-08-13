@@ -11,12 +11,19 @@ import Firebase
 import SPAlert
 
 struct SignUpView: View {
+    @Binding var showSheet: Bool
+    
+    @EnvironmentObject var appModel: AppViewModel
+    
     @State private var name: String = ""
     @State private var email: String = ""
     @State private var username: String = ""
     @State private var password: String = ""
     @State private var login_visible = false
-    @State private var docRef: DocumentReference!
+    
+    
+    @State private var isLoggedIn = false
+    @State private var isEmailValid : Bool   = true
     var body: some View {
             
         VStack(spacing: 0) {
@@ -64,6 +71,7 @@ struct SignUpView: View {
                                         Spacer()
                                     }
                                     TextField("John Smith", text: $name)
+                                        .disableAutocorrection(true)
                                         .padding()
                                         .cornerRadius(10)
                                         .overlay(
@@ -77,6 +85,8 @@ struct SignUpView: View {
                                         Spacer()
                                     }
                                     TextField("johnsmith", text: $username)
+                                        .autocapitalization(.none)
+                                        .disableAutocorrection(true)
                                         .padding()
                                         .cornerRadius(10)
                                         .overlay(
@@ -89,6 +99,8 @@ struct SignUpView: View {
                                     Spacer()
                                 }
                                 TextField("john@example.com", text: $email)
+                                    .disableAutocorrection(true)
+                                    .autocapitalization(.none)
                                     .padding()
                                     .cornerRadius(10)
                                     .overlay(
@@ -103,6 +115,8 @@ struct SignUpView: View {
                                     Spacer()
                                 }
                                 SecureField("Password", text: $password)
+                                    .disableAutocorrection(true)
+                                    .autocapitalization(.none)
                                     .padding()
                                     .cornerRadius(10)
                                     .overlay(
@@ -114,28 +128,15 @@ struct SignUpView: View {
                         VStack{
                             Spacer().frame(height: 30)
                             Button {
-                                print("Setting ref")
-                                let data: [String: Any] = [
-                                    "name": self.name,
-                                    "username": self.username,
-                                    "email": self.email,
-                                    "password": self.password
-                                ]
-                                self.docRef = Firestore.firestore().document("users/\(UUID().uuidString)")
-                                print("Setting data")
-                                self.docRef.setData(data) { error in
-                                    if let error = error {
-                                        print("Error = \(error)")
+                                guard !self.email.isEmpty, !self.password.isEmpty, !self.name.isEmpty else {
+                                    let alert = SPAlertView(title: "Error", message: "Email and Password fields cannot be empty", preset: SPAlertIconPreset.error)
+                                    alert.present(duration: 3, haptic: SPAlertHaptic.error) {
+                                        print("Error signing in")
                                     }
-                                    else{
-                                        let alert = SPAlertView(title: "Success", message: "Successfully created account.", preset: SPAlertIconPreset.done)
-                                        alert.present(duration: 3, haptic: SPAlertHaptic.success) {
-                                            print("Done")
-                                        }
-                                    }
-                                    
+                                    return
                                 }
-                                
+                                appModel.signUp(email: self.email, password: self.password, name: self.name)
+                                self.showSheet = false
                             } label: {
                                 ZStack {
                                     LinearGradient(gradient: Gradient(colors: [Color(red: 4 / 255, green: 220 / 255, blue: 4 / 255), Color(red: 0 / 255, green: 221 / 255, blue: 132 / 255)]), startPoint: .leading, endPoint: .trailing)
@@ -148,11 +149,12 @@ struct SignUpView: View {
                                 .cornerRadius(10)
                                 .shadow(radius: 10)
                             }
+                            
                             Spacer().frame(height: 10)
                             HStack{
                                 Text("Already have an acccount?")
                                 Button {
-                                    self.login_visible.toggle()
+                                    self.showSheet = false
                                 } label: {
                                     Text("Login")
                                         .foregroundColor(Color(UIColor.label))
@@ -173,11 +175,5 @@ struct SignUpView: View {
         .navigationBarTitle("Sign Up")
         .navigationBarTitleDisplayMode(.inline)
         
-    }
-}
-
-struct SignUpView_Previews: PreviewProvider {
-    static var previews: some View {
-        SignUpView()
     }
 }

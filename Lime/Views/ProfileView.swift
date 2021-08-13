@@ -8,10 +8,20 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @EnvironmentObject var appModel: AppViewModel
     var body: some View {
-        Text("Profile")
-            .navigationBarTitle("")
-            .navigationBarHidden(true)
+        VStack{
+            Text("Profile")
+            Button {
+                appModel.signOut()
+            } label: {
+                Text("Sign Out")
+            }
+
+        }
+        .navigationBarTitle("")
+        .navigationBarHidden(true)
+        
     }
 }
 
